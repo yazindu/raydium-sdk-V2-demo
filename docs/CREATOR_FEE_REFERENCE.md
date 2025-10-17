@@ -2,13 +2,17 @@
 
 This document focuses specifically on **creator fee claiming** - your primary learning goal.
 
+⚠️ **Note**: This covers **Launchpad Creator Fees** (during bonding curve phase). For **Fee Key NFT** (post-migration fees), see `FEE_KEY_NFT_GUIDE.md`.
+
 ## What Are Creator Fees?
 
-Creator fees are a portion of trading fees that go to the token creator. When users trade your token on a Raydium launchpad pool, fees are collected and can be claimed by:
+Creator fees are a portion of trading fees that go to the token creator **during the launchpad phase** (before graduation). When users trade your token on a Raydium launchpad pool, fees are collected and can be claimed by:
 
 1. **Platform** - Takes the largest share (typically 80%)
 2. **Creator** - Gets a percentage (typically 15%)
 3. **Burn mechanism** - Optional burn & earn feature (typically 5%)
+
+**Important**: These are fees from the **bonding curve trading**, NOT from the CPMM pool after migration.
 
 ## Fee Flow Diagram
 
@@ -341,6 +345,37 @@ const shareFeeRate = new BN(Math.min(5000, maxRate.toNumber()))
 
 ---
 
+## Two Types of Creator Fees
+
+### Comparison Table
+
+| Feature | Launchpad Creator Fees | Fee Key NFT |
+|---------|----------------------|-------------|
+| **Phase** | Bonding curve (pre-graduation) | Post-migration (after graduation) |
+| **Source** | Trading fees from launchpad | LP trading fees from CPMM |
+| **Fee %** | 15% (from your config) | 10% of all LP fees |
+| **Claim Method** | `claimCreatorFee()` | Harvest from locked position |
+| **Duration** | Only during launchpad phase | Perpetual (as long as trading continues) |
+| **Requirement** | Be the token creator | Hold the Fee Key NFT |
+| **Enable** | Automatic | Set `creatorFeeOn` during creation |
+
+**See**: `FEE_KEY_NFT_GUIDE.md` for complete Fee Key NFT documentation.
+
+### Complete Fee Timeline
+
+```
+Token Creation → Bonding Curve Trading → Graduation → CPMM Migration
+     ↓                    ↓                  ↓               ↓
+   Set up          Launchpad Fees      Migration      Fee Key NFT
+                   (This guide)        Happens        (See Fee Key guide)
+                         ↓                                  ↓
+                   Claim via                        Claim LP fees via
+                   claimCreatorFee()               Fee Key NFT (10%)
+                   (15% of trade fees)
+```
+
+---
+
 ## Key Takeaways
 
 1. **Creator fees accumulate automatically** from every trade
@@ -349,11 +384,13 @@ const shareFeeRate = new BN(Math.min(5000, maxRate.toNumber()))
 4. **Check maxShareFeeRate** before setting shareFeeRate
 5. **Batch claiming is efficient** for multiple pools
 6. **Test on devnet first** - all features work on devnet
+7. **After graduation** - Switch to Fee Key NFT for ongoing fees
 
 ---
 
 ## Related Documentation
 
+- `FEE_KEY_NFT_GUIDE.md` - **Post-migration fee claiming with NFT**
 - [Raydium Creator Fee Docs](https://docs.raydium.io/raydium/pool-creation/launchlab/creator-fee-share)
 - [Burn and Earn Docs](https://docs.raydium.io/raydium/pool-creation/burn-and-earn)
 - `LEARNING_GUIDE.md` - Full learning path

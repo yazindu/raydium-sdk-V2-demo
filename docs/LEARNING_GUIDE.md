@@ -167,6 +167,22 @@ This sets up:
    - Swap between launchpad and CLMM pools
    - Understand liquidity routing
 
+### Phase 4: Post-Migration (Fee Key NFT) 🔑
+
+⭐ **NEW**: Learn about **Fee Key NFT** - ongoing fees after token graduation!
+
+8. **Token Graduation & Migration**
+   - Fill bonding curve to 100%
+   - Token migrates to CPMM pool automatically
+   - Fee Key NFT is minted to your wallet
+
+9. **Fee Key NFT Management**
+   - Understand the difference between launchpad fees and Fee Key NFT
+   - Learn how to claim LP fees with the Fee Key NFT
+   - See `FEE_KEY_NFT_GUIDE.md` for complete documentation
+
+**Important**: Your WeMeme config uses `defaultMigrateType: 'cpmm'`, which is perfect for Fee Key NFT!
+
 ---
 
 ## Devnet vs Mainnet Differences
@@ -248,6 +264,7 @@ computeBudgetConfig: {
 
 ## Testing Checklist
 
+### Launchpad Phase (Pre-Graduation)
 - [ ] Buy tokens from launchpad pool
 - [ ] Sell tokens back to pool
 - [ ] Claim creator fees (PRIMARY GOAL)
@@ -256,8 +273,15 @@ computeBudgetConfig: {
 - [ ] Create platform configuration
 - [ ] Test with share fee receiver
 - [ ] Verify fee splits (platform/creator/burn)
-- [ ] Test CPMM pool creation (if needed)
 - [ ] Batch collect multiple creator fees
+
+### Post-Migration Phase (Fee Key NFT)
+- [ ] Enable `creatorFeeOn` during token creation
+- [ ] Fill bonding curve to graduation
+- [ ] Verify Fee Key NFT minted to wallet
+- [ ] Make trades on CPMM pool to generate LP fees
+- [ ] Claim fees using Fee Key NFT
+- [ ] Understand perpetual fee mechanism
 
 ---
 
@@ -274,6 +298,8 @@ computeBudgetConfig: {
 
 ## Useful Resources
 
+- `FEE_KEY_NFT_GUIDE.md` - **Complete guide to Fee Key NFT** (post-migration fees)
+- `CREATOR_FEE_REFERENCE.md` - Launchpad creator fees reference
 - [Raydium Docs - Creator Fee Share](https://docs.raydium.io/raydium/pool-creation/launchlab/creator-fee-share)
 - [Raydium Docs - Burn and Earn](https://docs.raydium.io/raydium/pool-creation/burn-and-earn)
 - [Raydium UI V3 Source](https://github.com/raydium-io/raydium-ui-v3-public) - See production usage

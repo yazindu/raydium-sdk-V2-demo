@@ -1,7 +1,7 @@
 # Raydium SDK V2 Demo - Devnet Learning Setup
 
 **Status**: ✅ Configured for devnet learning
-**Focus**: Creator fee claiming and fee sharing
+**Focus**: Creator fee claiming, fee sharing, and Fee Key NFT
 **Network**: Solana Devnet
 
 ---
@@ -34,7 +34,8 @@ yarn dev src/launchpad/buy.ts
 |------|---------|
 | **SETUP_INSTRUCTIONS.md** | Step-by-step setup guide, key conversion, troubleshooting |
 | **LEARNING_GUIDE.md** | Phased learning path, devnet features, testing checklist |
-| **CREATOR_FEE_REFERENCE.md** | Deep dive on creator fees, fee sharing, examples |
+| **CREATOR_FEE_REFERENCE.md** | Launchpad creator fees (pre-graduation), fee sharing |
+| **FEE_KEY_NFT_GUIDE.md** | 🔑 **Fee Key NFT** (post-graduation perpetual fees) |
 | **CLAUDE.md** | Architecture overview, SDK patterns, common issues |
 
 ---
@@ -59,6 +60,13 @@ yarn dev src/launchpad/buy.ts
 11. ✅ Test cross-pool swaps
 12. ✅ Compare with your WeMeme implementation
 
+### Phase 4: Fee Key NFT (Post-Graduation) 🔑
+13. ✅ Enable `creatorFeeOn` during token creation
+14. ✅ Graduate token to CPMM pool
+15. ✅ Verify Fee Key NFT in wallet
+16. ✅ Claim perpetual LP fees with NFT
+17. ✅ See `FEE_KEY_NFT_GUIDE.md` for details
+
 ---
 
 ## 🔧 Key Configuration
@@ -71,11 +79,16 @@ Creator Share:    15% → 0.15%  ← YOU CLAIM THIS
 Burn Share:       5% → 0.05%
 ```
 
-**Example on 100 SOL Trade**:
+**Example on 100 SOL Trade (Launchpad Phase)**:
 - Total fees: 1 SOL
 - Platform: 0.8 SOL (auto-claimed by platform)
 - **Creator: 0.15 SOL** ← You claim with `claimCreatorFee.ts`
 - Burn: 0.05 SOL (goes to burn program)
+
+**After Token Graduates (Fee Key NFT)**:
+- LP trading fees → 10% claimable by Fee Key NFT holder
+- Perpetual passive income mechanism
+- See `FEE_KEY_NFT_GUIDE.md` for details
 
 ---
 
@@ -120,10 +133,12 @@ yarn dev src/launchpad/createPlatform.ts
 
 ### Fully Supported ✅
 - ✅ Launchpad buy/sell
-- ✅ Creator fee claiming (YOUR MAIN GOAL)
+- ✅ Creator fee claiming (launchpad phase)
+- ✅ **Fee Key NFT** (post-migration fees)
 - ✅ Fee sharing
 - ✅ Platform fees
-- ✅ Token creation
+- ✅ Token creation with `creatorFeeOn`
+- ✅ Token graduation & migration to CPMM
 - ✅ Pool queries (use RPC methods)
 - ✅ CPMM operations
 - ✅ All core trading features
@@ -131,6 +146,7 @@ yarn dev src/launchpad/createPlatform.ts
 ### Limited Support ⚠️
 - ⚠️ API endpoints (use `getRpcPoolInfo()` instead)
 - ⚠️ Burn & Earn (check if program exists on devnet)
+- ⚠️ Full graduation flow (may require significant volume)
 
 ### Use RPC, Not API
 ```typescript
@@ -255,12 +271,14 @@ Before running scripts:
 By working through these demos, you'll understand:
 
 1. ✅ How Raydium launchpad bonding curves work
-2. ✅ How trading fees are collected and distributed
+2. ✅ How trading fees are collected and distributed (launchpad phase)
 3. ✅ How to claim creator fees programmatically
 4. ✅ How fee sharing works for partnerships
-5. ✅ How to batch operations for efficiency
-6. ✅ Pool state management and queries
-7. ✅ Integration patterns for your WeMeme project
+5. ✅ **How Fee Key NFT enables perpetual post-migration fees** 🔑
+6. ✅ Token graduation and migration to CPMM pools
+7. ✅ How to batch operations for efficiency
+8. ✅ Pool state management and queries
+9. ✅ Integration patterns for your WeMeme project
 
 ---
 
@@ -277,8 +295,9 @@ By working through these demos, you'll understand:
 ## 📞 Need Help?
 
 1. Check `SETUP_INSTRUCTIONS.md` for setup issues
-2. See `CREATOR_FEE_REFERENCE.md` for fee-specific questions
-3. Read `LEARNING_GUIDE.md` for structured learning path
-4. Review `CLAUDE.md` for architecture details
+2. See `CREATOR_FEE_REFERENCE.md` for launchpad fee questions
+3. See `FEE_KEY_NFT_GUIDE.md` for post-migration fee questions 🔑
+4. Read `LEARNING_GUIDE.md` for structured learning path
+5. Review `CLAUDE.md` for architecture details
 
 Happy learning! 🎉
