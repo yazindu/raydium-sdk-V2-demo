@@ -3,12 +3,13 @@ import {
   DEVNET_PROGRAM_ID,
   printSimulate,
   getPdaLaunchpadConfigId,
+  getPdaLaunchpadPoolId,
   LaunchpadConfig,
   LAUNCHPAD_PROGRAM,
   LaunchpadPoolInitParam,
   CpmmCreatorFeeOn,
 } from '@raydium-io/raydium-sdk-v2'
-import { initSdk } from '../config'
+import { initSdk, PLATFORM_ID } from '../config'
 import BN from 'bn.js'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { NATIVE_MINT } from '@solana/spl-token'
@@ -17,11 +18,13 @@ import { generateSpecificKeypair } from './utils'
 export const createMint = async () => {
   const raydium = await initSdk()
 
-  const programId = LAUNCHPAD_PROGRAM // devnet: DEVNET_PROGRAM_ID.LAUNCHPAD_PROGRAM
+  const programId = DEVNET_PROGRAM_ID.LAUNCHPAD_PROGRAM // Use devnet program
 
   const pair = Keypair.generate()
   // const pair = generateSpecificKeypair() // generate xxxxend mint address
   const mintA = pair.publicKey
+
+  console.log('Creating token with mint:', mintA.toBase58())
 
   const configId = getPdaLaunchpadConfigId(programId, NATIVE_MINT, 0, 0).publicKey
 
@@ -37,24 +40,24 @@ export const createMint = async () => {
     programId,
     mintA,
     decimals: 6,
-    name: 'new launchpad mint',
-    symbol: 'NLP',
-    migrateType: 'amm',
-    uri: 'https://google.com',
+    name: 'Test Learning Token',
+    symbol: 'LEARN',
+    migrateType: 'cpmm', // Use CPMM for Fee Key NFT support
+    uri: 'https://raydium.io',
 
     configId,
     configInfo, // optional, sdk will get data by configId if not provided
     mintBDecimals: mintBInfo.decimals, // default 9
     /** default platformId is Raydium platform, you can create your platform config in ./createPlatform.ts script */
 
-    // platformId: new PublicKey('your platform id'), // default RAYDIUM playform 4Bu96XjU84XjPDSpveTVf6LYGCkfW5FK7SNkREWcEfV4
+    platformId: new PublicKey(PLATFORM_ID), // Using our custom platform
     txVersion: TxVersion.V0,
     slippage: new BN(100), // means 1%
     buyAmount: inAmount,
     createOnly: true, // true means create mint only, false will "create and buy together"
     extraSigners: [pair],
 
-    // creatorFeeOn: CpmmCreatorFeeOn.OnlyTokenB, //optional: default CpmmCreatorFeeOn.OnlyTokenB
+    creatorFeeOn: CpmmCreatorFeeOn.OnlyTokenB, // Enable Fee Key NFT for post-migration fees
 
     // supply: new BN(1_000_000_000_000_000), // lauchpad mint supply amount, default: LaunchpadPoolInitParam.supply
     // totalSellA: new BN(793_100_000_000_000),  // lauchpad mint sell amount, default: LaunchpadPoolInitParam.totalSellA
@@ -76,14 +79,31 @@ export const createMint = async () => {
 
   try {
     const sentInfo = await execute({ sequentially: true })
-    console.log('poolId: ', extInfo)
-    console.log(sentInfo)
+
+    // Calculate pool ID from mintA and mintB
+    const poolId = getPdaLaunchpadPoolId(programId, mintA, configInfo.mintB).publicKey
+
+    console.log('\n========================================')
+    console.log('✅ Token created successfully!')
+    console.log('========================================')
+    console.log('Pool ID:', poolId.toBase58())
+    console.log('Mint A:', mintA.toBase58())
+    console.log('Mint B (SOL):', configInfo.mintB.toBase58())
+    console.log('Transaction:', sentInfo.txIds[0])
+    console.log('========================================')
+    console.log('\n💡 Add these to your src/config.ts:')
+    console.log(`export const TEST_POOL_ID = '${poolId.toBase58()}'`)
+    console.log(`export const TEST_MINT_A = '${mintA.toBase58()}'`)
+    console.log('========================================\n')
   } catch (e: any) {
+    console.log('❌ Error creating token:')
     console.log(e)
+    if (e.message) console.log('Message:', e.message)
+    if (e.logs) console.log('Logs:', e.logs)
   }
 
   process.exit() // if you don't want to end up node execution, comment this line
 }
 
 /** uncomment code below to execute */
-// createMint()
+createMint()

@@ -7,12 +7,12 @@ import {
   LAUNCHPAD_PROGRAM,
   Curve,
 } from '@raydium-io/raydium-sdk-v2'
-import { initSdk } from '../config'
+import { initSdk, TEST_POOL_ID } from '../config'
 import BN from 'bn.js'
 
 export const poolInfo = async () => {
   const raydium = await initSdk()
-  const poolId = new PublicKey('pool id')
+  const poolId = new PublicKey(TEST_POOL_ID)
   // or you can get pool id from mintA/B  getPdaLaunchpadPoolId(LAUNCHPAD_PROGRAM, mintA, mintB).publicKey
 
   const r = await raydium.connection.getAccountInfo(poolId)

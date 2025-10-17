@@ -16,9 +16,9 @@ export const createPlatform = async () => {
     platformLockNftWallet: owner,
     cpConfigId: new PublicKey('5MxLgy9oPdTC3YgkiePHqr3EoCRD9uLVYRQS2ANAs7wy'),
 
-    transferFeeExtensionAuth: new PublicKey('auth'), // or just set owner
+    transferFeeExtensionAuth: owner, // or just set owner
 
-    creatorFeeRate: new BN('0'), // set number for fee rate
+    creatorFeeRate: new BN('1500'), // 15% creator fee (matching WeMeme config: 80/15/5 split)
     /**
      * when migration, launchpad pool will deposit mints in vaultA/vaultB to new cpmm pool
      * and return lp to migration wallet
@@ -26,14 +26,14 @@ export const createPlatform = async () => {
      * note: sum of these 3 should be 10**6, means percent (0%~100%)
      */
     migrateCpLockNftScale: {
-      platformScale: new BN(400000), // means 40%, locked 40% of return lp and return to platform nft wallet
-      creatorScale: new BN(500000), // means 50%, locked 50% of return lp and return to creator nft wallet
-      burnScale: new BN(100000), // means 10%, burned return lp percent after migration
+      platformScale: new BN(800000), // means 80%, matching WeMeme platform share
+      creatorScale: new BN(150000), // means 15%, matching WeMeme creator share
+      burnScale: new BN(50000), // means 5%, matching WeMeme burn share
     },
-    feeRate: new BN(1000), // launch lab buy and sell platform feeRate
-    name: 'your platform name',
-    web: 'https://your.platform.org',
-    img: 'https://your.platform.org/img',
+    feeRate: new BN(10000), // launch lab buy and sell platform feeRate (100% = 10000 basis points)
+    name: 'WeMeme Learning Platform',
+    web: 'https://raydium.io',
+    img: 'https://raydium.io',
     txVersion: TxVersion.V0,
     // computeBudgetConfig: {
     //   units: 600000,
@@ -41,17 +41,28 @@ export const createPlatform = async () => {
     // },
   })
 
-  //   printSimulate([transaction])
+  printSimulate([transaction])
 
   try {
     const sentInfo = await execute({ sendAndConfirm: true })
-    console.log(sentInfo, `platformId: ${extInfo.platformId.toBase58()}`)
+    console.log('\n========================================')
+    console.log('✅ Platform created successfully!')
+    console.log('========================================')
+    console.log('Platform ID:', extInfo.platformId.toBase58())
+    console.log('Transaction:', sentInfo)
+    console.log('========================================')
+    console.log('\n💡 Add this to your src/config.ts:')
+    console.log(`export const PLATFORM_ID = '${extInfo.platformId.toBase58()}'`)
+    console.log('========================================\n')
   } catch (e: any) {
+    console.log('❌ Error creating platform:')
     console.log(e)
+    if (e.message) console.log('Message:', e.message)
+    if (e.logs) console.log('Logs:', e.logs)
   }
 
   process.exit() // if you don't want to end up node execution, comment this line
 }
 
 /** uncomment code below to execute */
-// createPlatform()
+createPlatform()
